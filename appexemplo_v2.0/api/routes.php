@@ -63,7 +63,8 @@ $app->get("/", function ($request, $response, $args) use ($app) {
 
     $response = $response->withJson($msg);
     return $response;
-})->add(basicAuth());
+});
+//})->add(basicAuth());
 
 $app->get('/sysinfo', SysinfoAPI::class . ':getInfo');
 
