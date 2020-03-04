@@ -1,7 +1,5 @@
 <?php
 
-namespace src;
-
 use Tuupola\Middleware\JwtAuthentication;
 
 function jwtAuth(): JwtAuthentication
