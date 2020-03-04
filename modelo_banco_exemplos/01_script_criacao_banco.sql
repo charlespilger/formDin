@@ -319,7 +319,7 @@ CREATE TABLE IF NOT EXISTS `pessoa_juridica` (
   `cnae` INT NULL COMMENT 'códigos de atividades econômicas em todo o país',
   `idnatureza_juridica` INT NULL,
   `dat_inclusao` DATETIME NOT NULL DEFAULT NOW(),
-  `dat_alteracao` DATETIME NULL DEFAULT now() ON UPDATE now(),  
+  `dat_alteracao` DATETIME NULL DEFAULT now() ON UPDATE now(),
   PRIMARY KEY (`idpessoa_juridica`),
   INDEX `fk_pessoa_juridica_pessoa1_idx` (`idpessoa` ASC),
   INDEX `fk_pessoa_juridica_natureza_juridica1_idx` (`idnatureza_juridica` ASC),
@@ -453,7 +453,7 @@ CREATE TABLE IF NOT EXISTS `endereco` (
   `bairro` VARCHAR(300) NULL,
   `cidade` VARCHAR(300) NULL,
   `dat_inclusao` DATETIME NOT NULL DEFAULT NOW(),
-  `dat_alteracao` DATETIME NULL DEFAULT now() ON UPDATE now(),   
+  `dat_alteracao` DATETIME NULL DEFAULT now() ON UPDATE now(),
   PRIMARY KEY (`idendereco`),
   INDEX `fk_endereco_pessoa1_idx` (`idpessoa` ASC),
   INDEX `fk_endereco_tipo1_idx` (`idtipo_endereco` ASC),
@@ -491,7 +491,7 @@ CREATE TABLE IF NOT EXISTS `telefone` (
   `whastapp` CHAR(1) NULL COMMENT 'informa se o numero tem whastapp',
   `telegram` CHAR(1) NULL COMMENT 'informa se o numero tem telegram',
   `dat_inclusao` DATETIME NOT NULL DEFAULT NOW(),
-  `dat_alteracao` DATETIME NULL DEFAULT now() ON UPDATE now(),   
+  `dat_alteracao` DATETIME NULL DEFAULT now() ON UPDATE now(),
   PRIMARY KEY (`idtelefone`),
   INDEX `fk_telefone_pessoa1_idx` (`idpessoa` ASC),
   INDEX `fk_telefone_tipo1_idx` (`idtipo_telefone` ASC),
@@ -513,8 +513,55 @@ CREATE TABLE IF NOT EXISTS `telefone` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-USE `form_exemplo` ;
+-- -----------------------------------------------------
+-- Table `log_acesso`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `log_acesso` ;
 
+CREATE TABLE IF NOT EXISTS `log_acesso` (
+  `idlog_acesso` INT NOT NULL AUTO_INCREMENT,
+  `iduser` INT NOT NULL,
+  `dat_acesso` DATETIME NOT NULL DEFAULT now(),
+  `idmenu` INT NOT NULL,
+  `ip` VARCHAR(45) NULL COMMENT 'ip do usuario',
+  PRIMARY KEY (`idlog_acesso`),
+  INDEX `fk_log_acesso_acesso_user1_idx` (`iduser` ASC),
+  INDEX `fk_log_acesso_acesso_menu1_idx` (`idmenu` ASC),
+  CONSTRAINT `fk_log_acesso_acesso_user1`
+    FOREIGN KEY (`iduser`)
+    REFERENCES `acesso_user` (`iduser`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_log_acesso_acesso_menu1`
+    FOREIGN KEY (`idmenu`)
+    REFERENCES `acesso_menu` (`idmenu`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+COMMENT = 'gera o log de acesso do usuario';
+
+
+-- -----------------------------------------------------
+-- Table `acesso_tokens`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `acesso_tokens` ;
+
+CREATE TABLE IF NOT EXISTS `acesso_tokens` (
+  `idacesso_tokens` INT NOT NULL AUTO_INCREMENT,
+  `iduser` INT NOT NULL,
+  `token` VARCHAR(1000) NOT NULL,
+  `refresh_token` VARCHAR(1000) NOT NULL,
+  `expired_at` DATETIME NOT NULL,
+  `active` CHAR(1) NOT NULL DEFAULT 'Y',
+  PRIMARY KEY (`idacesso_tokens`),
+  INDEX `fk_acesso_tokens_acesso_user1_idx` (`iduser` ASC),
+  CONSTRAINT `fk_acesso_tokens_acesso_user1`
+    FOREIGN KEY (`iduser`)
+    REFERENCES `acesso_user` (`iduser`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+COMMENT = 'Tokens de acesso paa JWT';
 
 -- -----------------------------------------------------
 -- procedure selFilhosMenu
@@ -653,8 +700,8 @@ SELECT p.idpessoa
 	,p.sit_ativo
 	,p.dat_inclusao
 	,DATE_FORMAT(p.dat_inclusao, '%d/%m/%Y') as dat_inclusao_format
-	,p.dat_alteracao
-	,DATE_FORMAT(p.dat_alteracao, '%d/%m/%Y') as dat_alteracao_format  
+  ,p.dat_alteracao
+	,DATE_FORMAT(p.dat_alteracao, '%d/%m/%Y') as dat_alteracao_format
 	,pf.cpf
 	,pf.idpessoa_fisica
 	,pf.cod_municipio_nascimento
@@ -671,28 +718,28 @@ FROM
 
 
 -- -----------------------------------------------------
--- View `vw_pessoa`
+-- View `vw_pessoa_fisica`
 -- -----------------------------------------------------
 USE `form_exemplo`;
 DROP VIEW IF EXISTS `vw_pessoa_fisica` ;
 CREATE  OR REPLACE VIEW `vw_pessoa_fisica` AS
 
 SELECT p.idpessoa
-      ,p.nome
-	    ,p.tipo
-	    ,p.sit_ativo
-	    ,pf.cpf
-      ,pf.rg	
-      ,m.cod_uf
-      ,m.nom_uf
-      ,m.sig_uf
-      ,pf.cod_municipio_nascimento
-      ,m.nom_municipio
-	    ,pf.dat_nascimento
-	    ,DATE_FORMAT(pf.dat_nascimento, '%d/%m/%Y') as dat_nascimento_format
-      ,pf.idpessoa_fisica
-	    ,p.dat_inclusao
-      ,p.dat_alteracao
+    ,p.nome
+	,p.tipo
+	,p.sit_ativo
+	,pf.cpf
+    ,pf.rg	
+    ,m.cod_uf
+    ,m.nom_uf
+    ,m.sig_uf
+    ,pf.cod_municipio_nascimento
+    ,m.nom_municipio
+	,pf.dat_nascimento
+	,DATE_FORMAT(pf.dat_nascimento, '%d/%m/%Y') as dat_nascimento_format
+    ,pf.idpessoa_fisica
+	,p.dat_inclusao   
+    ,p.dat_alteracao
 FROM 
 	pessoa as p
 	left join pessoa_fisica as pf
