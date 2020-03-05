@@ -18,10 +18,11 @@ use api_controllers\Acesso_menuAPI;
 use api_controllers\Acesso_perfilAPI;
 use api_controllers\Acesso_perfil_menuAPI;
 use api_controllers\Acesso_perfil_userAPI;
+use api_controllers\Acesso_tokensAPI;
 use api_controllers\Acesso_userAPI;
-use api_controllers\Acesso_user_menuAPI;
 use api_controllers\AutoridadeAPI;
 use api_controllers\EnderecoAPI;
+use api_controllers\Log_acessoAPI;
 use api_controllers\MarcaAPI;
 use api_controllers\Meta_tipoAPI;
 use api_controllers\MunicipioAPI;
@@ -157,6 +158,20 @@ $app->group('/acesso_perfil_user', function() use ($app) {
 
 
 //--------------------------------------------------------------------
+//  TABLE: acesso_tokens
+//--------------------------------------------------------------------
+$app->group('/acesso_tokens', function() use ($app) {
+    $app->get('', Acesso_tokensAPI::class . ':selectAll');
+    $app->get('/{id:[0-9]+}', Acesso_tokensAPI::class . ':selectById');
+
+
+    $app->post('', Acesso_tokensAPI::class . ':save');
+    $app->put('/{id:[0-9]+}', Acesso_tokensAPI::class . ':save');
+    $app->delete('/{id:[0-9]+}', Acesso_tokensAPI::class . ':delete');
+});
+
+
+//--------------------------------------------------------------------
 //  TABLE: acesso_user
 //--------------------------------------------------------------------
 $app->group('/acesso_user', function() use ($app) {
@@ -195,6 +210,20 @@ $app->group('/endereco', function() use ($app) {
     $app->post('', EnderecoAPI::class . ':save');
     $app->put('/{id:[0-9]+}', EnderecoAPI::class . ':save');
     $app->delete('/{id:[0-9]+}', EnderecoAPI::class . ':delete');
+});
+
+
+//--------------------------------------------------------------------
+//  TABLE: log_acesso
+//--------------------------------------------------------------------
+$app->group('/log_acesso', function() use ($app) {
+    $app->get('', Log_acessoAPI::class . ':selectAll');
+    $app->get('/{id:[0-9]+}', Log_acessoAPI::class . ':selectById');
+
+
+    $app->post('', Log_acessoAPI::class . ':save');
+    $app->put('/{id:[0-9]+}', Log_acessoAPI::class . ':save');
+    $app->delete('/{id:[0-9]+}', Log_acessoAPI::class . ':delete');
 });
 
 
