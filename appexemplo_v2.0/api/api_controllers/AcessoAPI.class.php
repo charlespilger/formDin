@@ -12,8 +12,10 @@
 
 namespace api_controllers;
 
+use DateTime;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
+use Firebase\JWT\JWT;
 
 class AcessoAPI
 {
@@ -35,6 +37,43 @@ class AcessoAPI
     }
 
     //--------------------------------------------------------------------------------
+    private static function genToken(string $login_user)
+    {
+        $controller = new \Acesso_user();
+        $user = $controller->selectByLogin($login_user);
+
+        $expireDate = (new DateTime())->modify('+1 days');
+        $tokenPayload = [
+            'sub' => $user['IDUSER'][0],
+            'name' => $user['LOGIN_USER'][0],
+            'expired_at' => $expireDate
+        ];
+
+        $token = JWT::encode($tokenPayload, getenv('JWT_SECRET_KEY'));
+
+        $refreshTokenPayload = [
+            'name' => $user['LOGIN_USER'][0],
+            'ramdom' => uniqid()
+        ];
+        $refreshToken = JWT::encode($refreshTokenPayload, getenv('JWT_SECRET_KEY'));        
+
+        $vo = new \Acesso_tokensVO();
+        $vo->setIduser($user['IDUSER'][0]);
+        $vo->setToken($token);
+        $vo->setRefresh_token($refreshToken);
+        $vo->setExpired_at($expireDate->format('Y-m-d H:i:s'));
+        $vo->setActive('Y');
+        $controller = new \Acesso_tokens;
+        $controller->save($vo);
+
+        $result = array();
+        $result['token']=$token;
+        $result['refreshToken']=$refreshToken;
+
+        return $result;
+    }
+
+    //--------------------------------------------------------------------------------
     public static function login(Request $request, Response $response, array $args)
     {
         $bodyRequest = json_decode($request->getBody(),true);
@@ -45,7 +84,13 @@ class AcessoAPI
         $controller = new \Acesso;
         $msg = $controller->login($login_user,$pwd_user);
         $response = $response->withJson($msg);
-        if($msg != true){
+        if($msg == true){
+            $token = self::genToken($login_user);
+            $response = $response->withJson([
+                "token" => $token['token'],
+                "refresh_token" => $token['refreshToken']
+            ]);
+        }else{
             $response = $response->withJson($msg,401); //401 Unauthorized  https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Status/401
         }
         return $response;
