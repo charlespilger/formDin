@@ -20,6 +20,7 @@ use api_controllers\Acesso_perfil_menuAPI;
 use api_controllers\Acesso_perfil_userAPI;
 use api_controllers\Acesso_tokensAPI;
 use api_controllers\Acesso_userAPI;
+use api_controllers\AcessoAPI;
 use api_controllers\AutoridadeAPI;
 use api_controllers\EnderecoAPI;
 use api_controllers\Log_acessoAPI;
@@ -182,6 +183,13 @@ $app->group('/acesso_user', function() use ($app) {
     $app->post('', Acesso_userAPI::class . ':save');
     $app->put('/{id:[0-9]+}', Acesso_userAPI::class . ':save');
     $app->delete('/{id:[0-9]+}', Acesso_userAPI::class . ':delete');
+});
+
+//--------------------------------------------------------------------
+//  Controller: AcessoAPI
+//--------------------------------------------------------------------
+$app->group('/login', function() use ($app) {
+    $app->post('', AcessoAPI::class . ':login');
 });
 
 
