@@ -42,7 +42,7 @@ class AcessoAPI
         $controller = new \Acesso_user();
         $user = $controller->selectByLogin($login_user);
 
-        $expireDate = (new DateTime())->modify('+1 days');
+        $expireDate = (new DateTime())->modify('+1 days')->format('Y-m-d H:i:s');
         $tokenPayload = [
             'sub' => $user['IDUSER'][0],
             'name' => $user['LOGIN_USER'][0],
@@ -61,7 +61,7 @@ class AcessoAPI
         $vo->setIduser($user['IDUSER'][0]);
         $vo->setToken($token);
         $vo->setRefresh_token($refreshToken);
-        $vo->setExpired_at($expireDate->format('Y-m-d H:i:s'));
+        $vo->setExpired_at($expireDate);
         $vo->setActive('Y');
         $controller = new \Acesso_tokens;
         $controller->save($vo);
