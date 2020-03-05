@@ -65,6 +65,15 @@ class Acesso_tokensDAO
         return $result;
     }
     //--------------------------------------------------------------------------------
+    public function selectByRefreshToken( $refreshToken )
+    {
+        ValidateHelper::isSet($refreshToken,__METHOD__,__LINE__);
+        $values = array($refreshToken);
+        $sql = self::$sqlBasicSelect.' where refresh_token = ?';
+        $result = $this->tpdo->executeSql($sql, $values);
+        return $result;
+    }    
+    //--------------------------------------------------------------------------------
     public function selectCount( $where=null )
     {
         $where = $this->processWhereGridParameters($where);

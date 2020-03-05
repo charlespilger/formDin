@@ -34,6 +34,22 @@ class Acesso_tokens
         return $result;
     }
     //--------------------------------------------------------------------------------
+    public function selectByRefreshToken( $refreshToken )
+    {
+        $result = $this->dao->selectByRefreshToken( $refreshToken );
+        return $result;
+    }
+    //--------------------------------------------------------------------------------
+    public function verifyRefreshToken( $refreshToken )
+    {
+        $data = $this->selectByRefreshToken( $refreshToken );
+        $result = false;
+        if($refreshToken == $data['REFRESH_TOKEN'][0]){
+            $result = true;
+        }
+        return $result;
+    }    
+    //--------------------------------------------------------------------------------
     public function selectCount( $where=null )
     {
         $result = $this->dao->selectCount( $where );
