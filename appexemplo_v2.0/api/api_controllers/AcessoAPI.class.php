@@ -45,6 +45,9 @@ class AcessoAPI
         $controller = new \Acesso;
         $msg = $controller->login($login_user,$pwd_user);
         $response = $response->withJson($msg);
+        if($msg != true){
+            $response = $response->withJson($msg,401); //401 Unauthorized  https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Status/401
+        }
         return $response;
     }
 }
