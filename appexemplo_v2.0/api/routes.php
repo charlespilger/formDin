@@ -74,8 +74,9 @@ $app->get('/sysinfo', SysinfoAPI::class . ':getInfo');
 //  Controller: AcessoAPI
 //--------------------------------------------------------------------
 $app->group('/login', function() use ($app) {
-    $app->post('', AcessoAPI::class . ':login');
-    $app->get('/test',AcessoAPI::class . ':test')->add(jwtAuth());
+    $app->post('', AcessoAPI::class.':login');
+    $app->post('/refresh-token', AcessoAPI::class.':refreshToken');
+    $app->get('/test',AcessoAPI::class.':test')->add(jwtAuth());
 });
 
 //--------------------------------------------------------------------
