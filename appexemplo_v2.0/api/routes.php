@@ -42,6 +42,8 @@ use api_controllers\Vw_acesso_user_menuAPI;
 use api_controllers\Vw_pessoaAPI;
 use api_controllers\Vw_pessoa_marca_produtoAPI;
 
+use Middlewares\JwtDateTimeMiddleware;
+
 $app = new \Slim\App(slimConfiguration());
 
 $app->get("/", function ($request, $response, $args) use ($app) {
@@ -76,7 +78,9 @@ $app->get('/sysinfo', SysinfoAPI::class . ':getInfo');
 $app->group('/login', function() use ($app) {
     $app->post('', AcessoAPI::class.':login');
     $app->post('/refresh-token', AcessoAPI::class.':refreshToken');
-    $app->get('/test',AcessoAPI::class.':test')->add(jwtAuth());
+    $app->get('/test',AcessoAPI::class.':test')
+        ->add(new JwtDateTimeMiddleware())
+        ->add(jwtAuth());
 });
 
 //--------------------------------------------------------------------
