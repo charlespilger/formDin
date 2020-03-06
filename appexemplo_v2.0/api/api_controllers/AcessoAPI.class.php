@@ -110,8 +110,8 @@ class AcessoAPI
     public function refreshToken(Request $request, Response $response, array $args): Response
     {
         $data = $request->getParsedBody();
-        $refreshToken = $data['refresh_token'];
-        $expireDate = $data['expire_date'];
+        $refreshToken = self::getParam('refresh_token',$data);
+        $expireDate   = self::getParam('expired_at',$data);
 
         $refreshTokenDecoded = JWT::decode(
             $refreshToken,
