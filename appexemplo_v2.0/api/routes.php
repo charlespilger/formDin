@@ -70,7 +70,13 @@ $app->get("/", function ($request, $response, $args) use ($app) {
 
 $app->get('/sysinfo', SysinfoAPI::class . ':getInfo');
 
-
+//--------------------------------------------------------------------
+//  Controller: AcessoAPI
+//--------------------------------------------------------------------
+$app->group('/login', function() use ($app) {
+    $app->post('', AcessoAPI::class . ':login');
+    $app->get('/test',AcessoAPI::class . ':test')->add(jwtAuth());
+});
 
 //--------------------------------------------------------------------
 //  VIEW: selFilhosMenu
@@ -183,14 +189,6 @@ $app->group('/acesso_user', function() use ($app) {
     $app->post('', Acesso_userAPI::class . ':save');
     $app->put('/{id:[0-9]+}', Acesso_userAPI::class . ':save');
     $app->delete('/{id:[0-9]+}', Acesso_userAPI::class . ':delete');
-});
-
-//--------------------------------------------------------------------
-//  Controller: AcessoAPI
-//--------------------------------------------------------------------
-$app->group('/login', function() use ($app) {
-    $app->post('', AcessoAPI::class . ':login');
-    $app->get('/test',AcessoAPI::class . ':test')->add(jwtAuth());
 });
 
 

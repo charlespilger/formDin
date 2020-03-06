@@ -26,23 +26,27 @@ class AcessoAPI
 
 
     //--------------------------------------------------------------------------------
-    private static function getParam(string $paramName, $bodyRequest)
+    private static function getParam(string $paramName, $bodyRequest, $required = true)
     {
-        if( \ArrayHelper::has($paramName,$bodyRequest)){
-            $paramName = $bodyRequest[$paramName];
-        }else{
+        $paramValue = null;
+        $paramValue = \ArrayHelper::get($bodyRequest,$paramName);
+        if($required && empty($paramValue) ){
             throw new \InvalidArgumentException('Parametro '.$paramName.' não informado');
         }
-        return $paramName;
+        return $paramValue;
     }
 
     //--------------------------------------------------------------------------------
-    private static function genToken(string $login_user)
+    private static function genToken(string $login_user,$expireDate=null)
     {
         $controller = new \Acesso_user();
         $user = $controller->selectByLogin($login_user);
 
-        $expireDate = (new DateTime())->modify('+1 days')->format('Y-m-d H:i:s');
+        //Criado só para fins didaticos, no mundo real a data que expirada deve ser gerada
+        if( empty($expireDate) ){
+            $expireDate = (new DateTime())->modify('+1 days')->format('Y-m-d H:i:s');
+        }
+
         $tokenPayload = [
             'sub' => $user['IDUSER'][0],
             'name' => $user['LOGIN_USER'][0],
@@ -85,12 +89,13 @@ class AcessoAPI
 
         $login_user = self::getParam('login_user',$bodyRequest);
         $pwd_user   = self::getParam('pwd_user',$bodyRequest);
+        $expired_at = self::getParam('expired_at',$bodyRequest,false);
 
         $controller = new \Acesso;
         $msg = $controller->login($login_user,$pwd_user);
         $response = $response->withJson($msg);
         if($msg == true){
-            $token = self::genToken($login_user);
+            $token = self::genToken($login_user,$expired_at);
             $response = $response->withJson([
                 "token" => $token['token'],
                 "refresh_token" => $token['refreshToken']
@@ -106,6 +111,7 @@ class AcessoAPI
     {
         $data = $request->getParsedBody();
         $refreshToken = $data['refresh_token'];
+        $expireDate = $data['expire_date'];
 
         $refreshTokenDecoded = JWT::decode(
             $refreshToken,
@@ -119,7 +125,7 @@ class AcessoAPI
             return $response->withStatus(401);
         }
         
-        $token = self::genToken($refreshTokenDecoded->name);
+        $token = self::genToken($refreshTokenDecoded->name,$expireDate);
         $response = $response->withJson([
             "token" => $token['token'],
             "refresh_token" => $token['refreshToken']
