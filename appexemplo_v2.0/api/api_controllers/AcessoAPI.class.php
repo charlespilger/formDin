@@ -26,7 +26,7 @@ class AcessoAPI
 
 
     //--------------------------------------------------------------------------------
-    private static function getParam(string $paramName, array $bodyRequest)
+    private static function getParam(string $paramName, $bodyRequest)
     {
         if( \ArrayHelper::has($paramName,$bodyRequest)){
             $paramName = $bodyRequest[$paramName];
