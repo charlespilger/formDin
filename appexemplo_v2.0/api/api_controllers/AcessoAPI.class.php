@@ -72,7 +72,12 @@ class AcessoAPI
 
         return $result;
     }
-
+    //--------------------------------------------------------------------------------
+    public static function test(Request $request, Response $response, array $args)
+    {
+        $response = $response->withJson('OK!');
+        return $response;
+    }
     //--------------------------------------------------------------------------------
     public static function login(Request $request, Response $response, array $args)
     {

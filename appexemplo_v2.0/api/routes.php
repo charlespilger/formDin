@@ -190,6 +190,7 @@ $app->group('/acesso_user', function() use ($app) {
 //--------------------------------------------------------------------
 $app->group('/login', function() use ($app) {
     $app->post('', AcessoAPI::class . ':login');
+    $app->get('/test',AcessoAPI::class . ':test')->add(jwtAuth());
 });
 
 
