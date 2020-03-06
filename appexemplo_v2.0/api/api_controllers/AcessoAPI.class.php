@@ -101,7 +101,6 @@ class AcessoAPI
     {
         $data = $request->getParsedBody();
         $refreshToken = $data['refresh_token'];
-        $expireDate = $data['expire_date'];
 
         $refreshTokenDecoded = JWT::decode(
             $refreshToken,
@@ -115,37 +114,10 @@ class AcessoAPI
             return $response->withStatus(401);
         }
         
-        $usuariosDAO = new UsuariosDAO();
-        $usuario = $usuariosDAO->getUserByEmail($refreshTokenDecoded->email);
-        if(is_null($usuario))
-            return $response->withStatus(401);
-
-        $tokenPayload = [
-            'sub' => $usuario->getId(),
-            'name' => $usuario->getNome(),
-            'email' => $usuario->getEmail(),
-            'expired_at' => $expireDate
-        ];
-
-        $token = JWT::encode($tokenPayload, getenv('JWT_SECRET_KEY'));
-        $refreshTokenPayload = [
-            'email' => $usuario->getEmail(),
-            'ramdom' => uniqid()
-        ];
-        $refreshToken = JWT::encode($refreshTokenPayload, getenv('JWT_SECRET_KEY'));
-
-        $tokenModel = new TokenModel();
-        $tokenModel->setExpired_at($expireDate)
-            ->setRefresh_token($refreshToken)
-            ->setToken($token)
-            ->setUsuarios_id($usuario->getId());
-
-        $tokensDAO = new TokensDAO();
-        $tokensDAO->createToken($tokenModel);
-
+        $token = self::genToken($refreshTokenDecoded->name);
         $response = $response->withJson([
-            "token" => $token,
-            "refresh_token" => $refreshToken
+            "token" => $token['token'],
+            "refresh_token" => $token['refreshToken']
         ]);
 
         return $response;
