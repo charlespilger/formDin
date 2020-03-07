@@ -120,7 +120,7 @@ class AcessoAPI
         );
 
         $controller = new \Acesso_tokens;
-        $refreshTokenExists = $controller->verifyRefreshToken($refreshToken);
+        $refreshTokenExists = $controller->verifyRefreshTokenAndDelete($refreshToken);
         if(!$refreshTokenExists){
             return $response->withStatus(401);
         }

@@ -34,18 +34,21 @@ class Acesso_tokens
         return $result;
     }
     //--------------------------------------------------------------------------------
-    public function selectByRefreshToken( $refreshToken )
+    public function selectByRefreshTokenActive( $refreshToken )
     {
-        $result = $this->dao->selectByRefreshToken( $refreshToken );
+        $result = $this->dao->selectByRefreshTokenActive( $refreshToken );
         return $result;
     }
     //--------------------------------------------------------------------------------
-    public function verifyRefreshToken( $refreshToken )
+    public function verifyRefreshTokenAndDelete( $refreshToken, $delete=true )
     {
-        $data = $this->selectByRefreshToken( $refreshToken );
+        $data = $this->selectByRefreshTokenActive( $refreshToken );
         $result = false;
         if($refreshToken == $data['REFRESH_TOKEN'][0]){
             $result = true;
+            if($delete){
+                $this->delete( $data['IDACESSO_TOKENS'][0] );
+            }
         }
         return $result;
     }    

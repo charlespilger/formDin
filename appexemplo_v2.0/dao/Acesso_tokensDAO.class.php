@@ -65,11 +65,11 @@ class Acesso_tokensDAO
         return $result;
     }
     //--------------------------------------------------------------------------------
-    public function selectByRefreshToken( $refreshToken )
+    public function selectByRefreshTokenActive( $refreshToken )
     {
         ValidateHelper::isSet($refreshToken,__METHOD__,__LINE__);
         $values = array($refreshToken);
-        $sql = self::$sqlBasicSelect.' where refresh_token = ?';
+        $sql = self::$sqlBasicSelect." where ACTIVE='Y' and refresh_token = ?";
         $result = $this->tpdo->executeSql($sql, $values);
         return $result;
     }    
@@ -151,7 +151,8 @@ class Acesso_tokensDAO
     {
         FormDinHelper::validateIdIsNumeric($id,__METHOD__,__LINE__);
         $values = array($id);
-        $sql = 'delete from form_exemplo.acesso_tokens where idacesso_tokens = ?';
+        //$sql = 'delete from form_exemplo.acesso_tokens where idacesso_tokens = ?';
+        $sql = "update form_exemplo.acesso_tokens set active = 'N' where idacesso_tokens = ?";
         $result = $this->tpdo->executeSql($sql, $values);
         return $result;
     }
