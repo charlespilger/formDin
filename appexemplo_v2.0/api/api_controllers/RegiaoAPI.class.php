@@ -67,7 +67,8 @@ class RegiaoAPI
             $bodyRequest = $result[0];
             $vo = \FormDinHelper::setPropertyVo($bodyRequest,$vo);
         }
-        $bodyRequest = json_decode($request->getBody(),true);
+        $body = $request->getBody();
+        $bodyRequest = json_decode($body,true);
         $vo = \FormDinHelper::setPropertyVo($bodyRequest,$vo);
 
         $controller = new \Regiao;
