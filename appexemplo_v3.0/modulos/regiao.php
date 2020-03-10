@@ -13,6 +13,10 @@
 defined('APLICATIVO') or die();
 require_once 'modulos/includes/acesso_view_allowed.php';
 
+$controller = new Regiao();
+$result = $controller->selectAll();
+var_dump($result);
+
 $primaryKey = 'COD_REGIAO';
 $frm = new TForm('Cadastro de Regiões',800,950);
 $frm->setShowCloseButton(false);

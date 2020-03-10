@@ -14,10 +14,11 @@ class Regiao
 
 
     private $dao = null;
+    private $client = null;
 
     public function __construct($tpdo = null)
     {
-        $this->dao = new RegiaoDAO($tpdo);
+        $this->client = new GuzzleHttp\Client(['base_uri' => 'http://localhost/formDin/appexemplo_v2.0/api/']);
     }
     public function getDao()
     {
@@ -48,7 +49,9 @@ class Regiao
     //--------------------------------------------------------------------------------
     public function selectAll( $orderBy=null, $where=null )
     {
-        $result = $this->dao->selectAll( $orderBy, $where );
+        $response = $this->client->request('GET', 'regiao');
+        $contents = $response->getBody()->getContents();
+        $result = json_decode($contents);
         return $result;
     }
     //--------------------------------------------------------------------------------
