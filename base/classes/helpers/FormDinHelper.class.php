@@ -110,6 +110,35 @@ class FormDinHelper
         }
         return $arrayFormDin;
     }
+
+    //--------------------------------------------------------------------------------
+    /***
+     * Convert Object Vo to Array PDO 
+     * @param object $vo
+     * @throws InvalidArgumentException
+     * @return array
+     */
+    public static function convertVo2ArrayPDO($vo)
+    {
+        $arrayFormDin = self::convertVo2ArrayFormDin($vo);
+        $arrayPDO     = ArrayHelper::convertArrayFormDin2Pdo($arrayFormDin);
+        return $arrayPDO;
+    }
+
+    //--------------------------------------------------------------------------------
+    /***
+     * Convert Object Vo to JSON
+     * @param object $vo
+     * @throws InvalidArgumentException
+     * @return array
+     */
+    public static function convertVo2Json($vo)
+    {
+        $arrayPDO = self::convertVo2ArrayPDO($vo);
+        $json     = json_encode($arrayPDO[0]);
+        return $json;
+    }
+
     
     /**
      * @deprecated chante to ValidateHelper::methodLine
