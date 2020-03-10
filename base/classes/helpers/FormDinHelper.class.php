@@ -129,13 +129,17 @@ class FormDinHelper
     /***
      * Convert Object Vo to JSON
      * @param object $vo
-     * @throws InvalidArgumentException
+     * @throws InvalidArgumentException or Exception
      * @return array
      */
     public static function convertVo2Json($vo)
     {
         $arrayPDO = self::convertVo2ArrayPDO($vo);
         $json     = json_encode($arrayPDO[0]);
+        if(json_last_error() != JSON_ERROR_NONE){
+            $msg = json_last_error_msg();
+            throw new Exception($msg);
+        }
         return $json;
     }
 
