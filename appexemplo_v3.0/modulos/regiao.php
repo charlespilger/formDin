@@ -13,9 +13,15 @@
 defined('APLICATIVO') or die();
 require_once 'modulos/includes/acesso_view_allowed.php';
 
+/*
 $controller = new Regiao();
 $result = $controller->selectAll();
 var_dump($result);
+$result = $controller->selectById(1);
+var_dump($result);
+*/
+
+
 
 $primaryKey = 'COD_REGIAO';
 $frm = new TForm('Cadastro de Regiões',800,950);
@@ -128,7 +134,7 @@ if( isset( $_REQUEST['ajax'] )  && $_REQUEST['ajax'] ) {
     die();
 }
 
-$frm->addHtmlField('gride');
+//$frm->addHtmlField('gride');
 $frm->addJavascript('init()');
 $frm->show();
 

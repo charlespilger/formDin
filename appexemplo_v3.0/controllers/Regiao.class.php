@@ -31,7 +31,9 @@ class Regiao
     //--------------------------------------------------------------------------------
     public function selectById( $id )
     {
-        $result = $this->dao->selectById( $id );
+        $response = $this->client->request('GET', 'regiao/'.$id);
+        $contents = $response->getBody()->getContents();
+        $result = json_decode($contents);
         return $result;
     }
     //--------------------------------------------------------------------------------
@@ -57,11 +59,22 @@ class Regiao
     //--------------------------------------------------------------------------------
     public function save( RegiaoVO $objVo )
     {
+        $objJson = FormDinHelper::convertVo2Json($objVo);
         $result = null;
+        $response = null;
         if( $objVo->getCod_regiao() ) {
-            $result = $this->dao->update( $objVo );
+            $response =  $this->client->request('PUT', 'regiao/'.$objVo->getCod_regiao(), [
+                'json'    => $objJson
+            ]);
         } else {
-            $result = $this->dao->insert( $objVo );
+            $response =  $this->client->request('POST', 'regiao', [
+                'json'    => $objJson
+            ]);            
+        }
+        if($response->getStatusCode()==200){
+            $result = 1;
+        }else{
+            $result = 'erro';
         }
         return $result;
     }
