@@ -112,6 +112,7 @@ if( isset( $_REQUEST['ajax'] )  && $_REQUEST['ajax'] ) {
     $controller = new Regiao();
     $page = PostHelper::get('page');
     $dados = $controller->selectAllPagination( $primaryKey, $whereGrid, $page,  $maxRows);
+    var_dump($dados);
     $realTotalRowsSqlPaginator = $controller->selectCount( $whereGrid );
     $mixUpdateFields = $primaryKey.'|'.$primaryKey
                     .',NOM_REGIAO|NOM_REGIAO'

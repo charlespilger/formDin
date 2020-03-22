@@ -45,7 +45,17 @@ class Regiao
     //--------------------------------------------------------------------------------
     public function selectAllPagination( $orderBy=null, $where=null, $page=null,  $rowsPerPage= null)
     {
-        $result = $this->dao->selectAllPagination( $orderBy, $where, $page,  $rowsPerPage );
+        $headers = [            
+            'Accept'        => 'application/json'
+        ];
+        $response =  $this->client->request('GET', 'regiao/', [
+            'headers' => $headers
+        ]);
+        if($response->getStatusCode()==200){
+            $result = $response->getBody();
+        }else{
+            $result = 'erro';
+        }        
         return $result;
     }
     //--------------------------------------------------------------------------------
@@ -62,13 +72,18 @@ class Regiao
         $objJson = FormDinHelper::convertVo2Json($objVo);
         $result = null;
         $response = null;
+        $headers = [            
+            'Accept'        => 'application/json'
+        ];
         if( $objVo->getCod_regiao() ) {
             $response =  $this->client->request('PUT', 'regiao/'.$objVo->getCod_regiao(), [
-                'json'    => $objJson
+                 'headers' => $headers
+                ,'json'    => $objJson
             ]);
         } else {
-            $response =  $this->client->request('POST', 'regiao', [
-                'json'    => $objJson
+            $response =  $this->client->request('POST', 'regiao/', [
+                'headers' => $headers
+                ,'json'    => $objJson
             ]);            
         }
         if($response->getStatusCode()==200){
